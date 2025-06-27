@@ -1,0 +1,5 @@
+Flask
+Flask-SQLAlchemy
+azure-storage-blob
+psycopg2-binary
+python-dotenv
