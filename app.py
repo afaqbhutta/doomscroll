@@ -3,12 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from azure.storage.blob import BlobServiceClient
 import uuid
 import os
+from config import Config
 
 app = Flask(__name__)
-app.config.from_object('config.Config')
+app.config.from_object(Config)
 db = SQLAlchemy(app)
 
-# Blob Storage Client
+# Set up Azure Blob client
 blob_service_client = BlobServiceClient.from_connection_string(app.config['BLOB_CONNECTION_STRING'])
 container_client = blob_service_client.get_container_client(app.config['BLOB_CONTAINER_NAME'])
 
@@ -22,7 +23,7 @@ def upload():
     if request.method == "POST":
         file = request.files['video']
         title = request.form['title']
-        if file:
+        if file and title:
             blob_name = str(uuid.uuid4()) + "_" + file.filename
             blob_client = container_client.get_blob_client(blob_name)
             blob_client.upload_blob(file, overwrite=True)
@@ -38,6 +39,11 @@ def upload():
 def watch(video_id):
     video = Video.query.get_or_404(video_id)
     return render_template("video.html", video=video)
+
+@app.route("/feed")
+def feed():
+    videos = Video.query.order_by(Video.id.desc()).all()
+    return render_template("feed.html", videos=videos)
 
 if __name__ == "__main__":
     app.run(debug=True)

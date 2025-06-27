@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Video Feed</title>
+    <style>
+        .video-container { max-width: 640px; margin: 20px auto; }
+        video { width: 100%; }
+    </style>
+</head>
+<body>
+    <h2 style="text-align:center;">Video Feed</h2>
+    <div class="video-container">
+        {% for video in videos %}
+            <h3>{{ video.title }}</h3>
+            <video controls>
+                <source src="{{ video.blob_url }}" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+            <hr>
+        {% endfor %}
+    </div>
+</body>
+</html>
